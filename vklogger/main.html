@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>VK Logger</title>
+<style type="text/css">@import url('include/style.css');</style>
+<script language="Javascript" type="text/javascript" src="main_data/functions_js33.js"></script>
+<script language="Javascript" type="text/javascript" src="insert_data/responsexml.js"></script>
+<script language="Javascript" type="text/javascript" src="insert_data/getepochxml.js"></script>
+
+<script src="main_data/maps" type="text/javascript"></script>
+
+<script type="text/javascript" src="main_data/terminator.js"></script>
+<script type="text/javascript" src="insert_data/soundmanager2-nodebug-jsmin.js"></script>
+<script type="text/javascript">soundManager.url = 'include/';</script>
+<script type="text/javascript">
+var minresvuhf=2;
+var maxresvuhf=13;
+var minres6m=1;
+var maxres6m=8;
+var minreshf=1;
+var maxreshf=6;
+var latvuhf=-30;
+var lngvuhf=146;
+var zoomvuhf=3;
+var lat6m=-30;
+var lng6m=146;
+var zoom6m=3;
+var lathf=0;
+var lnghf=140;
+var zoomhf=2;
+var lat=latvuhf;
+var lng=lngvuhf;
+var zoom=zoomvuhf;
+var minres=minresvuhf;
+var maxres=maxresvuhf;
+
+soundManager.defaultOptions = { volume: 60 };
+soundManager.onload = function() {
+ // SM2 has loaded - now you can create and play sounds!
+soundManager.createSound('sound1','include/sound1.mp3');
+soundManager.createSound('sound2','include/sound2.mp3');
+soundManager.createSound('sound3','include/sound3.mp3');
+soundManager.createSound('sound4','include/sound4.mp3');
+soundManager.createSound('sound5','include/sound5.mp3');   
+soundManager.createSound('sound6','include/sound6.mp3');
+soundManager.createSound('sound7','include/sound7.mp3');
+soundManager.createSound('sound8','include/sound8.mp3');
+};
+</script>
+<script language="javascript" type="text/javascript">
+function testSound(n,vol) {
+//  alert("#="+n+" Vol="+vol);
+   soundManager.play('sound'+n,{volume: vol}); 
+}
+
+function newMessageAlert() {
+var n=1;
+var url='include/sound'+n+'.mp3';
+
+soundManager.onready(function(oStatus) {
+  if (oStatus.success) { if (n!=0) { soundManager.play('sound'+n);
+  } } 
+  else { // alert('Error: SoundManager application not loaded');
+  }
+});
+}
+
+function openChatSettings() {
+   document.getElementById('chatsettings').style.display = "block"; 
+}
+
+function closeChatSettings() {
+   document.getElementById('chatsettings').style.display = "none";	
+   document.getElementById('chat_msg').focus();
+}
+
+document.onkeypress = stopEnterKey;
+window.chatCount=0;
+</script>
+<!-- Set Timers for AJAX routines -->
+<script type="text/javascript" language="JavaScript">
+window.tableId=1;
+window.chatId=1;
+window.refreshRateT=91000;
+window.refreshRateCO=60000;
+window.refreshRateF=1210000;
+window.refreshRateM=75075;
+</script>
+
+<script type="text/javascript" language="JavaScript">
+function setTimers() {
+ timerT = setInterval ("taskT(tableId)",refreshRateT);  // Set timer for Main Logger Table
+ timerO = setInterval ("taskO(tableId)",refreshRateCO); // Set timer for Clock & Online List
+ timerF = setInterval ("taskF()",refreshRateF);         // Set timer for Forum Posts
+ timerM = setInterval ("taskM(tableId)",refreshRateM ); // Set timer for DX Path Map
+ setTimeout('timeOut()', 7200000);
+}
+
+function timeOut() {
+ clearInterval(timerT);
+ clearInterval(timerO);
+ clearInterval(timerF);
+ clearInterval(timerM);
+ timeOutUser();
+}
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="main_data/container.css">
+<link rel="stylesheet" type="text/css" href="main_data/fonts-min.css">
+
+<script type="text/javascript" src="main_data/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="main_data/dragdrop-min.js"></script>
+<script type="text/javascript" src="main_data/container-min.js"></script>
+<script type="text/javascript" language="JavaScript">
+YAHOO.namespace("example.container");
+
+function init() {
+// Instantiate a Panel from markup
+YAHOO.example.container.chat_main = new YAHOO.widget.Panel("chat_main", { width:"380px", underlay:"none", visible:true, xy:[600,30],  constraintoviewport:false } );
+ YAHOO.example.container.chat_main.render();
+ YAHOO.util.Event.addListener('showchat_main', 'click', YAHOO.example.container.chat_main.show, YAHOO.example.container.chat_main, true); 
+  var Dom = YAHOO.util.Dom, $ = Dom.get, Event = YAHOO.util.Event;
+  var closeBtn = Dom.getElementsByClassName('container-close')[0];
+ Event.addListener(closeBtn, 'click', function(e) { clearInterval(timerChat); window.chatCount=0; } );
+}
+
+YAHOO.util.Event.addListener(window, "load", init);
+</script>
+</head>
+ <body class="yui-skin-sam" ,="" onload="startUpNor(1)" onunload="GUnload()"> 
+<div id="page">
+ <div class="header">
+  <div class="title">VK Logger: Spot/Chat VK2TDT &gt; <span id="loggerTitle">2m &amp; above</span></div>
+  <div id="help"><span id="showchatbtn"><a href="#" id="showchat_main" onclick="showChat(window.chatId);">Show iChat <img src="main_data/e_chat.gif" border="0" align="top"></a></span> &nbsp; | <a href="https://www.vklogger.com/chat/" title="Full-screen iChat (Opens in new tab/window)" target="_blank">iChat+</a> | <a onmouseclick="openOverlay('ucp'); return true;" href="javascript:openOverlay('ucp')"><img src="main_data/setting_tools_32x32.png" wdith="16" height="16"></a><a onmouseclick="openOverlay('ucp'); return true;" href="javascript:openOverlay('ucp')">User Control Panel</a> | <a onmouseclick="openOverlay('contact'); return true;" href="javascript:openOverlay('contact')">Contact</a> | <a href="http://www.vklogger.com/forum/viewforum.php?f=64" target="_blank" title="How to do stuff">Help</a> | <a onmouseclick="openOverlay('tou'); return true;" href="javascript:openOverlay('tou')" title="vklogger.com Terms Of Use">Terms</a> | <a href="http://www.vklogger.com/donate.php" target="_blank" title="How to donate">Donate</a></div>   
+ </div>
+<div id="overlay">Loading...</div>
+<div id="findgrid">Loading...</div>
+<div id="chat_main"> 
+  <div class="hd">iChat: Chat only. Spot signal reports on Logger</div>
+  <div class="bd">
+   <div id="chat_sender">
+    <form name="chatSelector" id="chatSelector">
+    <select id="chatselect" name="chatselect" onchange="changeChat(this.form.chatselect.value);">
+     <option value="3">LF-MF-HF</option>
+     <option value="2">6m</option>
+     <option value="1" selected="selected">2m-70cm</option>
+    <option value="4">23 &amp; Above</option> 
+    </select> 
+    &nbsp; <a onmouseclick="openChatSettings(); return true;" href="javascript:openChatSettings();"><img src="main_data/icon_chat_colors3.png" title="iChat Settings"></a>
+    &nbsp; <a href="#"><img src="main_data/e_smile.gif" onclick="javascript:addEmoticon(':smile:');"></a> <a href="#"><img src="main_data/e_wink.gif" onclick="javascript:addEmoticon(':wink:');"></a> <a href="#"><img src="main_data/e_thumbsup.gif" onclick="javascript:addEmoticon(':tup:');"></a> <a href="#"><img src="main_data/e_thumbsdown.gif" onclick="javascript:addEmoticon(':tdown:');"></a> <a href="#"><img src="main_data/e_oops.gif" onclick="javascript:addEmoticon(':oops:');"></a> <a href="#"><img src="main_data/e_sad.gif" onclick="javascript:addEmoticon(':sad:');"></a> <a href="#"><img src="main_data/e_mad.gif" onclick="javascript:addEmoticon(':mad:');"></a> <a href="#"><img src="main_data/e_qrz.gif" onclick="javascript:addEmoticon(':qrz:');"></a><br>
+    </form> 
+      <form action="#" id="chatForm" name="chatForm" method="post" target="hidden">
+         Chat: <input type="text" id="chat_msg" name="chat_msg" maxlength="120" size="34">
+         <input name="clear" type="button" value="clear" onclick="javascript:document.forms.chatForm.chat_msg.value='';document.getElementById('chat_msg').focus(); ">  <input name="submit" type="submit" value="Send" onclick="submitChat(document.getElementById('chatForm'),'process_chat.php?table='+window.chatId,'chat_messages');clearChatEntry();return false;">
+         </form>
+  </div>   
+  <div id="chatsettings">
+<form id="settings">
+<img src="main_data/close.gif" onclick="closeChatSettings(); return true;" href="javascript:closeChatSettings();" title="Close" alt="Close" style="float:right; margin-top:1px; margin-right:3px;">
+Incoming message colours 
+   <select id="chat_rxcolor" name="chat_rxcolor" onchange="changeRxColor();">
+     <option value="auto" selected="selected">Colours as sent</option> 
+     <option value="black">Force to Black</option> 
+    </select> <br>
+   My chat sent as 
+    <select id="chat_txcolor" name="chat_txcolor" onchange="changeTxColor();">
+     <option value="000000" selected="selected">Black</option> 
+     <option value="404040">Grey</option>
+     <option value="FF0000">Red</option>
+     <option value="FF6600">Orange</option>
+     <option value="660000">Brown</option>
+     <option value="F000F0">Magenta</option>
+     <option value="0000FF">Blue</option>  
+     <option value="009900">Green</option>
+     <option value="009999">Cyan</option>
+    </select> <br>
+Show Day-Month <input type="checkbox" id="chat_date" onclick="changeDate();">
+</form>
+</div>
+     <div id="chat_result">Here with you: <a onclick="clickUser('VK2XN');" href="#">VK2XN</a> &nbsp;<a onclick="clickUser('VK2YOC');" href="#">VK2YOC</a> &nbsp;<table><tbody><tr class="rowchat2"><td class="time">09:39:49</td><td class="name"><a onclick="clickUser('VK5PJ');" href="#"><font color="#000000">VK5PJ</font></a></td><td class="text"><font color="#000000">VK5GF: did my audio stop ?
+</font></td></tr><tr class="rowchat1"><td class="time">03:35:07</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">ZL1RQ: Yes I do have it, Thanks. If you need to stir me up it's 03 3050599
+</font></td></tr><tr class="rowchat2"><td class="time">03:26:59</td><td class="name"><a onclick="clickUser('ZL1RQ');" href="#"><font color="#000000">ZL1RQ</font></a></td><td class="text"><font color="#000000">ZL7DX: do you have my mobile. 021 269 1743 if you want to get hold of me.
+</font></td></tr><tr class="rowchat1"><td class="time">03:22:23</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">for the evening.
+</font></td></tr><tr class="rowchat2"><td class="time">03:22:18</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">ZL1RQ: I see that Hepburns is looking like we migh be on the edge of something. I've turned the WSPR on and will run it 
+</font></td></tr><tr class="rowchat1"><td class="time">03:18:12</td><td class="name"><a onclick="clickUser('ZL1RQ');" href="#"><font color="#000000">ZL1RQ</font></a></td><td class="text"><font color="#000000">ok, will keep an ear out for it. been a lot of dx on fm band today from Vk and pacific
+</font></td></tr><tr class="rowchat2"><td class="time">03:18:10</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">ZL1RQ: Today for example, it's streaming The Sounds from Southland.
+</font></td></tr><tr class="rowchat1"><td class="time">03:17:20</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">ZL1RQ: rebroadcasts a stream from the internet. It's on 89.3 running about 25 watts to a vertical 1/2 wave
+</font></td></tr><tr class="rowchat2"><td class="time">03:16:39</td><td class="name"><a onclick="clickUser('ZL7DX');" href="#"><font color="#000000">ZL7DX</font></a></td><td class="text"><font color="#000000">ZL1RQ: Hi Alan, guess you meant that for me. Weka FM is gone but there is a small radio station at Tikitiki Hill that 
+</font></td></tr><tr class="rowchat1"><td class="time">03:15:20</td><td class="name"><a onclick="clickUser('ZL1RQ');" href="#"><font color="#000000">ZL1RQ</font></a></td><td class="text"><font color="#000000">ZL7DX: see below, is for you.
+</font></td></tr><tr class="rowchat2"><td class="time">03:14:34</td><td class="name"><a onclick="clickUser('ZL1RQ');" href="#"><font color="#000000">ZL1RQ</font></a></td><td class="text"><font color="#000000">VK2DVZ: Hi Chris, is Weka FM still running, if so what freq ??
+</font></td></tr><tr class="rowchat1"><td class="time">02:33:07</td><td class="name"><a onclick="clickUser('VK7HH');" href="#"><font color="#000000">VK7HH</font></a></td><td class="text"><font color="#000000">Beaming ZL WSPR 2m
+</font></td></tr><tr class="rowchat2"><td class="time">02:10:21</td><td class="name"><a onclick="clickUser('VK5GF');" href="#"><font color="#000000">VK5GF</font></a></td><td class="text"><font color="#000000"> Tx FT8 144.320 beaming ZL
+</font></td></tr><tr class="rowchat1"><td class="time">00:28:17</td><td class="name"><a onclick="clickUser('VK1KW');" href="#"><font color="#000000">VK1KW</font></a></td><td class="text"><font color="#000000"> <img src="main_data/e_qrz.gif" hspace="2"> ZL 144.100 mostly
+</font></td></tr><tr class="rowchat2"><td class="time">22:14:29</td><td class="name"><a onclick="clickUser('VK3ZAZ');" href="#"><font color="#000000">VK3ZAZ</font></a></td><td class="text"><font color="#000000">1296 beacons still in from downstate and vk7
+</font></td></tr></tbody></table>	
+</div>
+     <div id="chat_messages"></div>
+  </div>
+  <div class="ft">Move module by dragging iChat header &nbsp; <a href="#" onclick="setcookie('chatX', YAHOO.example.container.chat_main.cfg.getProperty('x'), 100); setcookie('chatY', YAHOO.example.container.chat_main.cfg.getProperty('y'), 100); alert('Chat screen position stored')">Save Pos'n</a> &nbsp; 
+  <a href="#" onclick="setcookie('chatX', '500', 100); setcookie('chatY', '30', 100); closeOverlay('ucpsettings')">Reset</a> &nbsp;
+</div>
+</div>
+<div id="content"> <!-- Was <div id="content"> -->
+ <div id="announce_global"> Have you updated WSJT-X for FT8 v2 yet?  &nbsp; <a href="http://www.vklogger.com/forum/viewtopic.php?f=45&amp;t=13806" target="_blank">See Forum for details</a></div>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0" border="0">
+ <tbody><tr>
+  <td valign="top"><div id="left"><table width="100%">
+<tbody><tr><td colspan="3"><div id="announce_local">23cm activity nights at 8pm local (daytime on weekends) on the 23rd of each month - See Forum for details.</div></td></tr><tr><td width="90">UTC</td><td width="120">From</td><td>Info - QSO, Propagation, etc related</td></tr><tr class="row1"><td><b>04:23</b> 18-Dec</td><td nowrap="nowrap"><b>VK3ZSJ</b> &nbsp; QF21QT</td><td>&gt; <b>VK3RGI</b> in <b>QF31IP</b> on 2403.434.000 BCN 519 &gt; @ 119.4km 99° <img src="main_data/tick.gif" hspace="2"><br><span class="d">lots of wifi noise but can make copy</span></td></tr>
+<tr class="row2"><td><b>02:19</b> 18-Dec</td><td nowrap="nowrap"><b>ZL1RQ</b> &nbsp; RF64SX</td><td>&gt; <b>NPR</b> in <b>AH36</b> on 89.700 WFM 59 &gt; @ 2739.9km 33° <br><span class="d">National Public Radio from American Samoa</span></td></tr>
+<tr class="row1"><td><b>00:39</b> 18-Dec</td><td nowrap="nowrap"><b>ZL1RQ</b> &nbsp; RF64SX</td><td>&gt; <b>MIX FM </b> in <b>QF01</b> on 89.900 WFM 59 &gt; @ 2915.4km 253° <br><span class="d">From Portland Vic</span></td></tr>
+<tr class="row2"><td><b>21:54</b> 17-Dec</td><td nowrap="nowrap"><b>VK3ZAZ</b> &nbsp; QF12AG</td><td>&gt; <b>VK3RGI</b> in <b>QF31IP</b> on 1296.434.000 BCN 539 &gt; @ 417.5km 101° <img src="main_data/tick.gif" hspace="2"></td></tr>
+<tr class="row1"><td><b>21:43</b> 17-Dec</td><td nowrap="nowrap"><b>VK1KW</b> &nbsp; QF44MT</td><td>&gt; <b>VK3VG</b> in <b>QF23RO</b> on 144.200.0 SSB 58 &gt; @ 350.1km 247° </td></tr>
+<tr class="row2"><td><b>21:42</b> 17-Dec</td><td nowrap="nowrap"><b>VK2TWR</b> &nbsp; QF43PL</td><td>&gt; <b>VK3AUU</b> in <b>QF21WU</b> on 144.200.0 SSB 57 &gt; @ 350.8km 237° </td></tr>
+<tr class="row1"><td><b>21:39</b> 17-Dec</td><td nowrap="nowrap"><b>VK2ZT</b> &nbsp; QF57WF</td><td>&gt; <b>VK3VG</b> in <b>QF23RO</b> on 144.200.0 SSB 55 &gt; @ 713.7km 234° </td></tr>
+<tr class="row2"><td><b>21:25</b> 17-Dec</td><td nowrap="nowrap"><b>VK2TWR</b> &nbsp; QF43PL</td><td>&gt; <b>VK3VG</b> in <b>QF23RO</b> on 1296.150.0 SSB 53 &gt; @ 343.5km 271° <br><span class="d">good to work you on 23 finally</span></td></tr>
+<tr class="row1"><td><b>21:22</b> 17-Dec</td><td nowrap="nowrap"><b>VK1KW</b> &nbsp; QF44MT</td><td>&gt; <b>VK2TWR</b> in <b>QF43PL</b> on 1296.150.0 SSB 53 &gt; @ 146.1km 171° <br><span class="d">some qsb</span></td></tr>
+<tr class="row2"><td><b>21:22</b> 17-Dec</td><td nowrap="nowrap"><b>VK1KW</b> &nbsp; QF44MT</td><td>&gt; <b>VK2TWR</b> in <b>QF43PL</b> on 432.150.0 SSB 59 &gt; @ 146.1km 171° </td></tr>
+<tr class="row1"><td><b>21:22</b> 17-Dec</td><td nowrap="nowrap"><b>VK1KW</b> &nbsp; QF44MT</td><td>&gt; <b>VK2TWR</b> in <b>QF43PL</b> on 144.200.0 SSB 59 &gt; @ 146.1km 171° </td></tr>
+<tr class="row2"><td><b>21:21</b> 17-Dec</td><td nowrap="nowrap"><b>VK2TWR</b> &nbsp; QF43PL</td><td>&gt; <b>VK3VG</b> in <b>QF23RO</b> on 432.150.0 SSB 57 &gt; @ 343.5km 271° </td></tr>
+<tr class="row1"><td><b>21:20</b> 17-Dec</td><td nowrap="nowrap"><b>VK2FLR</b> &nbsp; QF56OD</td><td>&gt; <b>VK2RSF</b> in <b>QF43QL</b> on 144.414.340 BCN 519 &gt; @ 337.8km 209° <img src="main_data/tick.gif" hspace="2"><br><span class="d">Plus spectran traces 432.414130 and 1296.414 off B787</span></td></tr>
+<tr class="row2"><td><b>21:19</b> 17-Dec</td><td nowrap="nowrap"><b>VK2TWR</b> &nbsp; QF43PL</td><td>&gt; <b>VK3VG</b> in <b>QF23RO</b> on 144.200.0 SSB 59 &gt; @ 343.5km 271° </td></tr>
+<tr class="row1"><td><b>21:18</b> 17-Dec</td><td nowrap="nowrap"><b>VK2TWR</b> &nbsp; QF43PL</td><td>&gt; <b>VK2BCC</b> in <b>QF56DI</b> on 144.200.0 SSB 55 &gt; @ 331.1km 16° <br><span class="d">long time Col</span></td></tr>
+</tbody></table></div></td>
+  <td width="380" valign="top">
+   <div id="right">
+   <div id="online"><div class="updatetitle">10:00 Tue 18-Dec-2018 (UTC) &nbsp; Total users: 35</div>2m &amp; above: VK2KCM VK2TDT VK2XN VK2YOC ZL3TV <br>6m:
+ VK1KW VK2FAD VK2VHF VK2VL VK2WP VK2ZQ VK3BY VK3CAT VK3DU VK3FFB VK3FS 
+VK3FZ VK3KTT VK3XL VK3YFL VK3ZSJ VK4DDG VK4FB VK4MIL VK4NWH VK5BC VK5DT 
+VK5IR VK5NG VK5RM VK6OX VK7HH VK8GM ZL2WHO ZL4OL</div>
+   <div id="opinfo" style="display: none;"></div>
+   <div class="updatetitle"><a onmouseclick="showHide('forum'); return true;" href="javascript:showHide('forum')">Recent Forum Topics +/-</a></div>
+   <div id="forum"><a href="https://www.vklogger.com/forum/viewtopic.php?f=45&amp;t=13813&amp;p=62668#p62668" target="_blank">Chat and Logger display - END OF LIFE</a> by <b>ADMIN</b> 18-Dec 08:10 <br><a href="https://www.vklogger.com/forum/viewtopic.php?f=11&amp;t=13815&amp;p=62664#p62664" target="_blank">FS1000A 433 MHz SAW ASK transmitters</a> by <b>ZL2WHO</b> 18-Dec 07:01 <br><a href="https://www.vklogger.com/forum/viewtopic.php?f=88&amp;t=13814&amp;p=62653#p62653" target="_blank">JTDX</a> by <b>VK4BLK</b> 17-Dec 00:59 <br><a href="https://www.vklogger.com/forum/viewtopic.php?f=45&amp;t=13806&amp;p=62649#p62649" target="_blank">FT8 version 2 is coming</a> by <b>VK2CSW</b> 16-Dec 05:39 <br><a href="https://www.vklogger.com/forum/viewtopic.php?f=11&amp;t=13764&amp;p=62636#p62636" target="_blank">Icom IC-9700 Pre-release brochure</a> by <b>VK6XLR</b> 15-Dec 11:14 <br><img src="main_data/arrow_r.gif">&nbsp;<a href="http://www.vklogger.com/forum/search.php?search_id=newposts" target="_blank">See ALL topics since my last Forum visit</a></div>
+   <div class="updatetitle"><a onmouseclick="showHide('gmap'); return true;" href="javascript:showHide('gmap')">DX Path Map +/-</a></div>
+   <div id="gmap"> 
+    <table cellspacing="0" cellpadding="0">
+     <tbody><tr>
+      <td width="380" height="280"><div id="map">&nbsp;</div></td>
+     </tr>
+     <tr>
+      <td><img id="legend" src="main_data/legend_1.gif"></td>
+       </tr>
+      </tbody></table>
+   </div>
+   <div class="updatetitle"><a onmouseclick="showHide('calculator');" href="javascript:showHide('calculator');">Bearing &amp; Distance Calculator +/- &nbsp; </a></div>
+   <div id="calculator">
+<table width="100%" cellspacing="2" cellpadding="2" border="0">
+ <tbody><tr>
+  <td>From: VK2TDT &nbsp; QF69LI &nbsp; Lat/Lon not set in your profile<br>Centre of grid used.  Approx Lat: -30.6458 &nbsp; Lon: 152.9583</td>
+ </tr>
+ <tr> 
+  <td>
+   <form name="calcForm">
+    <select name="find_type" id="find_type">
+     <option value="1" selected="selected">To Callsign</option>
+     <option value="2">To Grid Locator</option>
+    </select>
+    <input name="find_entry" id="find_entry" type="text" size="8" maxlength="10"> 
+    <input type="button" value="Clear" onclick="clearCalc();hidePanel('calc_result');">
+    <input type="button" value="Calculate" onclick="runCalc(document.calcForm.find_entry.value,document.calcForm.find_type.value,-30.6458,152.9583);showPanel('calc_result');"></form></td>
+   
+  </tr>
+  <tr> 
+   <td id="calc_result"></td>
+  </tr>
+</tbody></table>   
+   </div>
+ 
+   <div style="background-color:#000000">
+   <div class="updatetitle" style="float:left"><a onmouseclick="showHide('tools');" href="javascript:showHide('tools');">On-demand Tools +/- &nbsp; </a></div>
+   <div id="tools" style="display: none;"><form action="#" id="toolform" name="toolform" style="margin: 0px; padding: 0px; float:right" target="hidden">
+     <select id="toolselect" name="toolselect" onchange="javascript:doTools(this.form.toolselect.value);">
+     <option value="" selected="selected">- - - Select - - -</option>
+<!--     <option value="1">Distance/Bearing Calculator</option> -->
+     <option value="3">Quick check: 2m VK Logger</option>
+     <option value="4">Quick check: 6m VK Logger</option>
+     <option value="5">Quick check: HF Logger</option> --&gt;
+     <option value="6">Recent Database Updates</option>
+     <option value="9">Current Hepburn Chart</option>
+    </select>
+   </form></div>
+   </div>
+   <div id="toolresults" name="toolresults" style="display: none;">&nbsp;</div>
+  </div> <!-- End Right Div -->
+  </td>  
+ </tr>
+</tbody></table>
+
+ <div id="counters">Now: <span id="idnow">1</span> &nbsp; Last: <span id="idlast">0</span> &nbsp; AJAX Check: <span id="ajaxnow"></span> &nbsp; TableId: <span id="tableIdCheck"></span></div>
+</div>  <!-- End Content Div -->
+<div id="hidden">&nbsp;</div>
+</div> <!-- End Page Div -->
+
+<script type="text/javascript" language="JavaScript">
+//<![CDATA[
+if (GBrowserIsCompatible()) {
+  var side_bar_html = "";
+  var gmarkers = [];
+  var htmls = [];
+  var ii = 0;
+
+  var iconRed = new GIcon(); 
+  iconRed.image = 'images/mm_20_red.png';
+  iconRed.shadow = 'images/mm_20_shadow.png';
+  iconRed.iconSize = new GSize(12, 20);
+  iconRed.shadowSize = new GSize(22, 20);
+  iconRed.iconAnchor = new GPoint(6, 20);
+  iconRed.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconBlue = new GIcon(); 
+  iconBlue.image = 'images/mm_20_blue.png';
+  iconBlue.shadow = 'images/mm_20_shadow.png';
+  iconBlue.iconSize = new GSize(12, 20);
+  iconBlue.shadowSize = new GSize(22, 20);
+  iconBlue.iconAnchor = new GPoint(6, 20);
+  iconBlue.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconMagenta = new GIcon(); 
+  iconMagenta.image = 'images/mm_20_purple.png';
+  iconMagenta.shadow = 'images/mm_20_shadow.png';
+  iconMagenta.iconSize = new GSize(12, 20);
+  iconMagenta.shadowSize = new GSize(22, 20);
+  iconMagenta.iconAnchor = new GPoint(6, 20);
+  iconMagenta.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconYellow = new GIcon(); 
+  iconYellow.image = 'images/mm_20_yellow.png';
+  iconYellow.shadow = 'images/mm_20_shadow.png';
+  iconYellow.iconSize = new GSize(12, 20);
+  iconYellow.shadowSize = new GSize(22, 20);
+  iconYellow.iconAnchor = new GPoint(6, 20);
+  iconYellow.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconGreen = new GIcon(); 
+  iconGreen.image = 'images/mm_20_green.png';
+  iconGreen.shadow = 'images/mm_20_shadow.png';
+  iconGreen.iconSize = new GSize(12, 20);
+  iconGreen.shadowSize = new GSize(22, 20);
+  iconGreen.iconAnchor = new GPoint(6, 20);
+  iconGreen.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconWhite = new GIcon(); 
+  iconWhite.image = 'images/mm_20_white.png';
+  iconWhite.shadow = 'images/mm_20_shadow.png';
+  iconWhite.iconSize = new GSize(12, 20);
+  iconWhite.shadowSize = new GSize(22, 20);
+  iconWhite.iconAnchor = new GPoint(6, 20);
+  iconWhite.infoWindowAnchor = new GPoint(5, 1);
+
+  // Create the sun-position marker
+  var iconSun = new GIcon();
+  iconSun.image = 'images/sun.png';
+  iconSun.shadow = 'images/mm_20_shadow.png';
+  iconSun.iconSize = new GSize(25, 25);
+  iconSun.shadowSize = new GSize(22, 20);
+  iconSun.iconAnchor = new GPoint(12, 12);
+  iconSun.infoWindowAnchor = new GPoint(5, 1);
+
+  var iconRadar = new GIcon(); 
+  iconRadar.image = 'images/radar.gif';
+  iconRadar.shadow = 'images/radar.gif';
+  iconRadar.iconSize = new GSize(60, 30);
+  iconRadar.shadowSize = new GSize(60, 30);
+  iconRadar.iconAnchor = new GPoint(30, 15);
+  iconRadar.infoWindowAnchor = new GPoint(5, 1);
+
+  var customIcons = [];
+  customIcons["red"] = iconRed;
+  customIcons["blue"] = iconBlue;
+  customIcons["magenta"] = iconMagenta;
+  customIcons["yellow"] = iconYellow;
+  customIcons["green"] = iconGreen;
+  customIcons["white"] = iconWhite;
+  customIcons["sun"] = iconSun;
+  customIcons["radar"] = iconRadar;
+  var markerGroups = { "red": [], "blue": [], "magenta": [], "yellow": [], "green": [], "white": [], "sun": [], "radar": [] };
+
+  // create the map
+  var map = new google.maps.Map(document.getElementById("map"));
+  map.addControl(new GSmallMapControl());			
+  map.addControl(new GMapTypeControl());
+  map.removeMapType(G_SATELLITE_MAP);
+  map.removeMapType(G_HYBRID_MAP) 			
+  map.addMapType(G_PHYSICAL_MAP);
+  map.setCenter(new GLatLng(lat, lng), zoom);
+  map.enableScrollWheelZoom();
+  map.enableContinuousZoom();
+
+	  
+  // Create a marker withour infoText
+  function createMarker(point, type) {
+  	var marker = new GMarker(point, customIcons[type]);		
+	}
+
+
+  // Create the marker and corresponding information window
+  function createInfoMarker(point, spotDetails, type) {
+	var marker = new GMarker(point, customIcons[type]);
+	GEvent.addListener(marker, "click", function() {
+		marker.openInfoWindowHtml(spotDetails);
+		}
+ 	)
+	return marker;
+    }
+
+  // A function to read the data
+    function readMap(url) {
+     
+  // If browser is NOT MIE, then hide Google Map attribute credits
+  //if(navigator.appName!='Microsoft Internet Explorer') { document.getElementById("map").getElementsByTagName("span")[0].style.display = "none"; }
+	 
+  var polyOptions = {geodesic:true};
+  // ====== Restricting the range of Zoom Levels =====
+  // Get the list of map types      
+  var mt = map.getMapTypes();
+  // Overwrite the getMinimumResolution() and getMaximumResolution() methods
+  for (var i=0; i<mt.length; i++) {
+     mt[i].getMinimumResolution = function() {return minres; }
+     mt[i].getMaximumResolution = function() {return maxres; }
+  }
+     var request = GXmlHttp.create();
+     request.open("GET", url, true);
+     request.onreadystatechange = function() {
+     if (request.readyState == 4) {
+     var xmlDoc = GXml.parse(request.responseText);
+     // obtain the array of markers and loop through it
+     var markers = xmlDoc.documentElement.getElementsByTagName("marker");
+            
+     // hide the info window, otherwise it still stays open where the removed marker used to be
+     map.getInfoWindow().hide();
+            
+     map.clearOverlays();            
+	 
+	  var date = new Date();
+      var terminator = new Terminator(date);
+      terminator.show(map,false,true);
+           
+     // empty the arrays
+     gmarkers = [];
+     htmls = [];
+     ii = 0;
+
+     for (var i = 0; i < markers.length; i++) {
+      var point = new GPoint(parseFloat(markers[i].getAttribute("lon")),parseFloat(markers[i].getAttribute("lat")));
+      var spotDetails = '<div style="width: 220px;"><span style="font-size: 11px; font-family: verdana;"><b>' +markers[i].getAttribute("dx") + '</b> in <b>' + markers[i].getAttribute("dx_grid") + '</b><br>Spotted By:' + markers[i].getAttribute("poster") + ' in ' + markers[i].getAttribute("grid")+ '<br>' + markers[i].getAttribute("freq")+ ' ' + markers[i].getAttribute("mode") + ' ' + markers[i].getAttribute("rst")+ ' @ ' + markers[i].getAttribute("distance")+ 'km</span></div>';
+      var type = markers[i].getAttribute("type");
+
+      // Create Marker
+	  // If marker is sun, create a non-clickable marker with no infoWindow
+      if (type!='sun') { var marker = createInfoMarker(point, spotDetails, type); } else { var marker= new GMarker(point, customIcons[type], {clickable: false}); }
+
+      map.addOverlay(marker);
+     }           
+         
+
+     // ========= Now process the polylines ===========
+     var lines = xmlDoc.documentElement.getElementsByTagName("line");
+     // read each line
+     for (var a = 0; a < lines.length; a++) {
+      // get any line attributes
+      var color = lines[a].getAttribute("color");
+      var width  = parseFloat(lines[a].getAttribute("width"));
+      var weight  = parseFloat(lines[a].getAttribute("weight"));						
+      // read each point on that line
+      var points = lines[a].getElementsByTagName("point");
+      var pts = [];
+      for (var i = 0; i < points.length; i++) {
+        pts[i] = new GLatLng(parseFloat(points[i].getAttribute("lat")),
+        parseFloat(points[i].getAttribute("lng")));
+      }
+
+      map.addOverlay(new GPolyline(pts,color,width,weight, polyOptions));
+    }
+   // ================================================           
+
+  var polymageq2 = new GPolyline([
+  new GLatLng(11.2,0),
+  new GLatLng(11.4,15),  
+  new GLatLng(9.1,30),
+  new GLatLng(7.3,45),
+  new GLatLng(6.6,60),
+  new GLatLng(7.7,90),
+  new GLatLng(6.8,120),
+  new GLatLng(6.7,150),
+  new GLatLng(2.1,180),
+  new GLatLng(0,195),
+  new GLatLng(-1.1,210),
+  new GLatLng(-4.8,240),
+  new GLatLng(-10.1,270),
+  new GLatLng(-12,285),
+  new GLatLng(-8.5,300),
+  new GLatLng(0,315),
+  new GLatLng(7.7,330),
+  new GLatLng(11.1,345),
+  new GLatLng(11.2,360)  
+
+  ], "#000077", 8, 0.1, polyOptions);
+  map.addOverlay(polymageq2);
+
+
+    }
+   }
+  request.send(null);
+ }
+      
+ // When initially loaded, use the data generated by update_map.php
+ readMap("update_map.php?table=1");
+      
+} else { alert("Sorry, the Google Maps API is not compatible with this browser"); }
+//]]>
+</script> 
+
+
+<div id="sm2-container" class="movieContainer" style="position: absolute; width: 8px; height: 8px; top: -9999px; left: -9999px;"><embed name="sm2movie" id="sm2movie" src="insert_data/soundmanager2.swf" quality="high" allowscriptaccess="always" bgcolor="#ffffff" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowfullscreen="false" width="100%" height="100%"></div></body></html>

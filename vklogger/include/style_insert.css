@@ -1,0 +1,125 @@
+body{
+	margin: 0px;
+	padding: 0px;
+	color: #ffffff;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 11px;
+	background-image: none;
+	background-color: #000;
+}
+
+.entrytable {
+	background-color: #EEEEEE;
+	color: #000000;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.entrytable td {
+padding: 2px;
+}
+
+.menulogger {
+	background-color: #999;
+	margin: 0px;
+	height: 30px;
+	padding: 2px;
+}
+
+.menulinks {
+	background-color: #333;
+	margin: 0px;
+	height: 30px;
+	padding: 2px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	color: #FFFFFF;
+	letter-spacing: 1px;
+}
+
+.menulinks a:link {
+font-weight: bold;
+color: #FFFF00;
+text-decoration: none;
+letter-spacing: 1px;
+}
+
+.menulinks a:visited {
+font-weight: bold;
+color: #FFFF00;
+text-decoration: none;
+}
+
+.menulinks a:hover {
+color:#FF0000;
+font-weight: bold;
+text-decoration: underline;
+}
+
+.register {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	font-weight: normal;
+}
+
+.error {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	font-weight: bold;
+	color: #FF0000;
+	background-color: #FFF;
+	margin-right: 5px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.find {
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-size: 11px;
+text-align: center;
+font-weight: bold;
+color: #000000;
+background-color: #FFFFFF;
+}
+
+.findgrid {
+text-align: center;
+font-weight: bold;
+color: #FF0000;
+}
+
+.guest {
+color: #FF0000;
+font-weight: bold;
+text-align: center;
+background-color: #FFFF00;
+}
+.entrytou {
+
+background-color: #FFFFFF;
+color: #FF0000;
+font-weight: bold;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 12px;
+}
+.entrytable a:link {
+	font-weight: bold;
+	color: #00F;
+	text-decoration: none;
+	letter-spacing: 1px;
+}
+.entrytable a:visited {
+	font-weight: bold;
+	color: #00F;
+	text-decoration: none;
+}
+.entrytable a:hover {
+	color:#FF0000;
+	font-weight: bold;
+	text-decoration: underline;
+}
